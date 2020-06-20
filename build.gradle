@@ -1,0 +1,40 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			url uri("http://trevorism-build.eastus.cloudapp.azure.com/nexus/repository/maven-releases")
+		}
+	}
+	dependencies {
+		classpath 'com.trevorism:gradle-release-plugin:0.3.0'
+	}
+}
+
+plugins{
+	id "groovy"
+	id "jacoco"
+}
+
+apply plugin: "com.trevorism.gradle.release"
+
+repositories {
+	mavenCentral()
+	maven {
+		url uri("http://trevorism-build.eastus.cloudapp.azure.com/nexus/repository/maven-releases")
+	}
+}
+
+dependencies {
+	implementation 'com.trevorism:http-utils:1.0.2'
+	implementation 'com.trevorism:secure-utils:1.0.2'
+
+	implementation 'org.apache.httpcomponents:httpclient:4.5.12'
+	implementation 'com.google.code.gson:gson:2.8.6'
+
+	implementation 'org.codehaus.groovy:groovy-all:2.5.8'
+
+	testCompile 'junit:junit:4.13'
+
+}
+
+check.dependsOn "jacocoTestReport"
