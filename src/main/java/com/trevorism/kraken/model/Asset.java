@@ -1,5 +1,7 @@
 package com.trevorism.kraken.model;
 
+import groovy.transform.ToString;
+
 public class Asset {
 
     private String assetName;
@@ -28,5 +30,14 @@ public class Asset {
 
     public void setDisplayDecimals(int displayDecimals) {
         this.displayDecimals = displayDecimals;
+    }
+
+    @Override
+    public String toString() {
+        return "Asset{" +
+                "assetName='" + assetName + '\'' +
+                ", decimals=" + decimals +
+                ", displayDecimals=" + displayDecimals +
+                '}';
     }
 }
