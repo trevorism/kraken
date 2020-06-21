@@ -6,7 +6,7 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/trevorism/kraken)
 
 
-Java client wrapping [kraken.com]
+Java client wrapping [kraken.com](https://www.kraken.com/en-us/features/api)
 
 Current version: 0.0.1
 
