@@ -7,7 +7,7 @@ class DefaultPrivateKrakenClientTest {
 
     @Test
     void testGetAccountBalance() {
-        PrivateKrakenClient privateKrakenClient = new DefaultPrivateKrakenClient()
+        PrivateKrakenClient privateKrakenClient = new DefaultPrivateKrakenClient("key", "secret")
         privateKrakenClient.getAccountBalance()
     }
 }
