@@ -37,7 +37,7 @@ dependencies {
 
 }
 
-processResources{
+processTestResources{
 	doLast{
 		copy{
 			from "${System.getProperty("user.home")}/${project.name}/secrets.properties"
