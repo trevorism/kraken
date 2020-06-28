@@ -10,4 +10,10 @@ class DefaultPrivateKrakenClientTest {
         PrivateKrakenClient privateKrakenClient = new DefaultPrivateKrakenClient("key", "secret")
         privateKrakenClient.getAccountBalance()
     }
+
+    @Test
+    void testGetAccountBalanceNoArgConstructor() {
+        PrivateKrakenClient privateKrakenClient = new DefaultPrivateKrakenClient()
+        privateKrakenClient.getAccountBalance()
+    }
 }
