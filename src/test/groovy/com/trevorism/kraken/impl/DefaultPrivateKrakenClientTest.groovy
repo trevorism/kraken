@@ -10,8 +10,11 @@ class DefaultPrivateKrakenClientTest {
         PrivateKrakenClient privateKrakenClient = new DefaultPrivateKrakenClient()
         def balances = privateKrakenClient.getAccountBalance()
 
-        balances.each{
-            println it
-        }
+        assert balances
+        def first = balances[0]
+        assert first
+        assert first.assetName
+        assert first.balance > DefaultPrivateKrakenClient.EPSILON
+
     }
 }
