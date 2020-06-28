@@ -24,7 +24,7 @@ class KrakenSignatureTest extends GroovyTestCase {
     @Test
     void testSha256() {
         def bytes = KrakenSignature.sha256("nonce=1")
-        def resultAsString = Base64.encoder.encodeToString(bytes)
+        def resultAsString = Base64.encodeBase64String(bytes)
 
         assert resultAsString == "iVdcOzbRzdiPHejLqIJ0jXKKdL8Q+mrIhX0sR3Mdko4="
 

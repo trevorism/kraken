@@ -1,5 +1,6 @@
 package com.trevorism.kraken.impl
-import com.trevorism.kraken.KrakenClient
+
+import com.trevorism.kraken.PublicKrakenClient
 import com.trevorism.kraken.model.Price
 import com.trevorism.kraken.model.ValidCandleDurations
 import org.junit.Test
@@ -8,7 +9,7 @@ class DefaultPublicKrakenClientTest {
 
     @Test
     void "server time returns the time"() {
-        KrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
+        PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         long value = defaultKrakenClient.serverTime();
 
         println new Date(value)
@@ -17,7 +18,7 @@ class DefaultPublicKrakenClientTest {
 
     @Test
     void "get assets"() {
-        KrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
+        PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def assets = defaultKrakenClient.assets
 
         assert assets
@@ -26,7 +27,7 @@ class DefaultPublicKrakenClientTest {
 
     @Test
     void "get asset pairs"(){
-        KrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
+        PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def assetPairs = defaultKrakenClient.assetPairs
 
         assetPairs.each {
@@ -36,7 +37,7 @@ class DefaultPublicKrakenClientTest {
 
     @Test
     void "get price"(){
-        KrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
+        PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         Price price = defaultKrakenClient.getCurrentPrice("XBTUSD")
 
         println price
@@ -44,7 +45,7 @@ class DefaultPublicKrakenClientTest {
 
     @Test
     void "get daily candles"(){
-        KrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
+        PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def candles = defaultKrakenClient.getCandles("XBTUSD")
 
         candles.each {
@@ -54,7 +55,7 @@ class DefaultPublicKrakenClientTest {
 
     @Test
     void "get five minute candles"(){
-        KrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
+        PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def candles = defaultKrakenClient.getCandles("XBTUSD", ValidCandleDurations.FIVE_MINUTES)
 
         candles.each {
