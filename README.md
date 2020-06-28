@@ -8,9 +8,32 @@
 
 Java client wrapping [kraken.com](https://www.kraken.com/en-us/features/api)
 
-Current version: 0.0.1
+Current version: 0.1.0
 
 ## How to Use 
+Add a secrets.properties file in src/main/resources with the following content:
+
+```properties
+apiKey=<apikey>
+apiSecret=<apisecret>
+```
+
+Then 
+
+```java
+KrakenClient krakenClient = new DefaultKrakenClient();
+krakenClient.getCurrentPrice("XBTUSD");
+```
+
+## More reading
+These links from Kraken helped me implement this:
+
+https://support.kraken.com/hc/en-us/articles/360000919966-How-to-generate-an-API-key-pair-
+
+https://www.kraken.com/features/api
+
+https://support.kraken.com/hc/en-us/articles/360001491786-API-Error-Codes
+
 
 ## How to Build
 `gradle clean build`

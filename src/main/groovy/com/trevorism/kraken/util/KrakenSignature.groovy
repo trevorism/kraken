@@ -4,7 +4,7 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64
 
 class KrakenSignature {
 

@@ -1,11 +1,10 @@
 package com.trevorism.kraken.impl
 import com.trevorism.kraken.KrakenClient
-import com.trevorism.kraken.PrivateKrakenClient
 import com.trevorism.kraken.model.Price
 import com.trevorism.kraken.model.ValidCandleDurations
 import org.junit.Test
 
-class DefaultKrakenClientTest {
+class DefaultPublicKrakenClientTest {
 
     @Test
     void "server time returns the time"() {
@@ -63,9 +62,4 @@ class DefaultKrakenClientTest {
         }
     }
 
-    @Test
-    void "get Account balance" () {
-        PrivateKrakenClient defaultKrakenClient = new DefaultPrivateKrakenClient()
-        defaultKrakenClient.getAccountBalance()
-    }
 }
