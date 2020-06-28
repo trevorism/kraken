@@ -74,7 +74,7 @@ class DefaultPublicKrakenClient implements PublicKrakenClient {
     private List<Asset> mapResponseToAssets(Map content) {
         def values = content.result
         return values.collect { k, v ->
-            new Asset(assetName: v.altname, decimals: v.decimals, displayDecimals: v.display_decimals)
+            new Asset(assetName: v.altname, decimals: v.decimals, displayDecimals: v.display_decimals, krakenName: k)
         }
     }
 

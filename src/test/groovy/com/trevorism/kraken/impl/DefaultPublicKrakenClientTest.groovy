@@ -7,14 +7,18 @@ import org.junit.Test
 
 class DefaultPublicKrakenClientTest {
 
+    private static long TEN_SECONDS_IN_MILLIS = 10 * 1000
+
     @Test
     void "server time returns the time"() {
         PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
-        long value = defaultKrakenClient.serverTime();
-
-        println new Date(value)
+        long value = defaultKrakenClient.serverTime()
+        assertServerTimeIsWithinTenSecondsOfNow(value)
     }
 
+    private void assertServerTimeIsWithinTenSecondsOfNow(long value) {
+        assert Math.abs(value - new Date().time) < TEN_SECONDS_IN_MILLIS
+    }
 
     @Test
     void "get assets"() {
@@ -30,9 +34,9 @@ class DefaultPublicKrakenClientTest {
         PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def assetPairs = defaultKrakenClient.assetPairs
 
-        assetPairs.each {
-            println it
-        }
+        assert assetPairs
+        assert assetPairs[0].pairName
+        assert assetPairs[-1].pairName
     }
 
     @Test
@@ -40,7 +44,10 @@ class DefaultPublicKrakenClientTest {
         PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         Price price = defaultKrakenClient.getCurrentPrice("XBTUSD")
 
-        println price
+        assert price
+        assert price.last
+        assert price.bid
+        assert price.ask
     }
 
     @Test
@@ -48,9 +55,9 @@ class DefaultPublicKrakenClientTest {
         PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def candles = defaultKrakenClient.getCandles("XBTUSD")
 
-        candles.each {
-            println it
-        }
+        assert candles
+        assert candles[0].count
+        assert candles[-1].count
     }
 
     @Test
@@ -58,9 +65,9 @@ class DefaultPublicKrakenClientTest {
         PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def candles = defaultKrakenClient.getCandles("XBTUSD", ValidCandleDurations.FIVE_MINUTES)
 
-        candles.each {
-            println it
-        }
+        assert candles
+        assert candles[0].count
+        assert candles[-1].count
     }
 
 }

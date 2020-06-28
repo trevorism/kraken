@@ -5,12 +5,17 @@ import com.trevorism.http.headers.HeadersBlankHttpClient
 import com.trevorism.http.headers.HeadersHttpClient
 import com.trevorism.http.util.ResponseUtils
 import com.trevorism.kraken.PrivateKrakenClient
+import com.trevorism.kraken.model.Asset
+import com.trevorism.kraken.model.AssetBalance
+import com.trevorism.kraken.util.AssetCache
 import com.trevorism.kraken.util.KrakenSignature
 import org.apache.http.client.methods.CloseableHttpResponse
 
 class DefaultPrivateKrakenClient implements PrivateKrakenClient {
 
     private static final String API_PREFIX = "https://api.kraken.com"
+
+    private static final double EPSILON = 0.0001d
 
     private final Gson gson = new Gson()
     private final HeadersHttpClient httpClient = new HeadersBlankHttpClient()
@@ -33,10 +38,21 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
     }
 
     @Override
-    void getAccountBalance() {
-        HeadersHttpClient httpClient = new HeadersBlankHttpClient()
+    Set<AssetBalance> getAccountBalance() {
         String url = "https://api.kraken.com/0/private/Balance"
-        println makeKrakenPrivateRequest(url)
+        def content = makeKrakenPrivateRequest(url)
+        return mapResponseIntoAssetBalances(content)
+    }
+
+    private Set<AssetBalance> mapResponseIntoAssetBalances(Map content) {
+        def allAssets = AssetCache.INSTANCE.get()
+        def values = content.result
+        return values.findAll { k, v ->
+            Double.valueOf(v) > EPSILON
+        }.collect { k, v ->
+            Asset asset = allAssets.find { it.krakenName == k }
+            new AssetBalance(assetName: asset.assetName, balance: Double.valueOf(v))
+        } as Set
     }
 
     private def makeKrakenPrivateRequest(String url, Map requestData = [:]) {

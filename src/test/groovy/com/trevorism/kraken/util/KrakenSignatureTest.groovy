@@ -27,7 +27,6 @@ class KrakenSignatureTest extends GroovyTestCase {
         def resultAsString = Base64.encodeBase64String(bytes)
 
         assert resultAsString == "iVdcOzbRzdiPHejLqIJ0jXKKdL8Q+mrIhX0sR3Mdko4="
-
     }
 
     @Test

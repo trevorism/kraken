@@ -1,12 +1,11 @@
 package com.trevorism.kraken.model;
 
-import groovy.transform.ToString;
-
 public class Asset {
 
     private String assetName;
     private int decimals;
     private int displayDecimals;
+    private String krakenName;
 
     public String getAssetName() {
         return assetName;
@@ -32,12 +31,21 @@ public class Asset {
         this.displayDecimals = displayDecimals;
     }
 
+    public String getKrakenName() {
+        return krakenName;
+    }
+
+    public void setKrakenName(String krakenName) {
+        this.krakenName = krakenName;
+    }
+
     @Override
     public String toString() {
         return "Asset{" +
                 "assetName='" + assetName + '\'' +
                 ", decimals=" + decimals +
                 ", displayDecimals=" + displayDecimals +
+                ", krakenName='" + krakenName + '\'' +
                 '}';
     }
 }

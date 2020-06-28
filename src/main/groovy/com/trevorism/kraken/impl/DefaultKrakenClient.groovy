@@ -4,6 +4,7 @@ import com.trevorism.kraken.KrakenClient
 import com.trevorism.kraken.PrivateKrakenClient
 import com.trevorism.kraken.PublicKrakenClient
 import com.trevorism.kraken.model.Asset
+import com.trevorism.kraken.model.AssetBalance
 import com.trevorism.kraken.model.AssetPair
 import com.trevorism.kraken.model.Candle
 import com.trevorism.kraken.model.Price
@@ -13,8 +14,8 @@ import java.time.Duration
 
 class DefaultKrakenClient implements KrakenClient{
 
-    private static final PublicKrakenClient publicKrakenClient = new DefaultPublicKrakenClient()
-    private static PrivateKrakenClient privateKrakenClient
+    private final PublicKrakenClient publicKrakenClient = new DefaultPublicKrakenClient()
+    private PrivateKrakenClient privateKrakenClient
 
     DefaultKrakenClient(){
         privateKrakenClient = new DefaultPrivateKrakenClient()
@@ -50,7 +51,7 @@ class DefaultKrakenClient implements KrakenClient{
     }
 
     @Override
-    void getAccountBalance() {
+    Set<AssetBalance> getAccountBalance() {
         privateKrakenClient.getAccountBalance()
     }
 
