@@ -42,7 +42,7 @@ class DefaultKrakenClient implements KrakenClient{
 
     @Override
     Price getCurrentPrice(String assetPair) {
-        return publicKrakenClient.getCurrentPrice()
+        return publicKrakenClient.getCurrentPrice(assetPair)
     }
 
     @Override
