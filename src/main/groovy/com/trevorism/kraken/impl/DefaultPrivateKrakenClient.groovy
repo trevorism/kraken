@@ -27,6 +27,11 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
         apiSecret = properties.getProperty("apiSecret")
     }
 
+    DefaultPrivateKrakenClient(String apiKey, String apiSecret) {
+        this.apiKey = apiKey
+        this.apiSecret = apiSecret
+    }
+
     @Override
     void getAccountBalance() {
         HeadersHttpClient httpClient = new HeadersBlankHttpClient()

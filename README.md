@@ -25,6 +25,14 @@ KrakenClient krakenClient = new DefaultKrakenClient();
 krakenClient.getCurrentPrice("XBTUSD");
 ```
 
+If you want to inject your api key and secret using some other way:
+
+```java
+String apiKey = "...";
+String apiSecret = "...";
+KrakenClient krakenClient = new DefaultKrakenClient(new DefaultPrivateKrakenClient(apiKey, apiSecret));
+```
+
 ## More reading
 These links from Kraken helped me implement this:
 

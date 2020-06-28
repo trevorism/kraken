@@ -13,8 +13,16 @@ import java.time.Duration
 
 class DefaultKrakenClient implements KrakenClient{
 
-    private static final PrivateKrakenClient privateKrakenClient = new DefaultPrivateKrakenClient()
     private static final PublicKrakenClient publicKrakenClient = new DefaultPublicKrakenClient()
+    private static PrivateKrakenClient privateKrakenClient
+
+    DefaultKrakenClient(){
+        privateKrakenClient = new DefaultPrivateKrakenClient()
+    }
+
+    DefaultKrakenClient(PrivateKrakenClient privateKrakenClient){
+        this.privateKrakenClient = privateKrakenClient
+    }
 
     @Override
     long serverTime() {
