@@ -56,8 +56,8 @@ class DefaultPublicKrakenClientTest {
         def candles = defaultKrakenClient.getCandles("XBTUSD")
 
         assert candles
-        assert candles[0].count
-        assert candles[-1].count
+        assert candles[0]
+        assert candles[-1]
     }
 
     @Test
@@ -66,8 +66,8 @@ class DefaultPublicKrakenClientTest {
         def candles = defaultKrakenClient.getCandles("XBTUSD", ValidCandleDurations.FIVE_MINUTES)
 
         assert candles
-        assert candles[0].count
-        assert candles[-1].count
+        assert candles[0]
+        assert candles[-1]
     }
 
 }
