@@ -6,7 +6,7 @@ import org.junit.Test
 
 class DefaultPrivateKrakenClientTest {
 
-    @Test
+    //@Test
     void testGetAccountBalanceNoArgConstructor() {
         PrivateKrakenClient privateKrakenClient = new DefaultPrivateKrakenClient()
         def balances = privateKrakenClient.getAccountBalance()
