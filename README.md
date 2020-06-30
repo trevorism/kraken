@@ -8,10 +8,10 @@
 
 Java client wrapping [kraken.com](https://www.kraken.com/en-us/features/api)
 
-Current version: 0.1.1
+Current version: 0.2.0
 
 ## How to Use 
-Add a secrets.properties file in src/main/resources with the following content:
+Add a `secrets.properties` file in src/main/resources with the following content:
 
 ```properties
 apiKey=<apikey>

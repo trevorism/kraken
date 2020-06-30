@@ -14,7 +14,7 @@ import java.time.Duration
 
 class DefaultKrakenClient implements KrakenClient{
 
-    private final PublicKrakenClient publicKrakenClient = new DefaultPublicKrakenClient()
+    private PublicKrakenClient publicKrakenClient = new DefaultPublicKrakenClient()
     private PrivateKrakenClient privateKrakenClient
 
     DefaultKrakenClient(){

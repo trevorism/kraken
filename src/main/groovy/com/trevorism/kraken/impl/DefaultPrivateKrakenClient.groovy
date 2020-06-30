@@ -5,6 +5,7 @@ import com.trevorism.http.headers.HeadersBlankHttpClient
 import com.trevorism.http.headers.HeadersHttpClient
 import com.trevorism.http.util.ResponseUtils
 import com.trevorism.kraken.PrivateKrakenClient
+import com.trevorism.kraken.error.KrakenRequestException
 import com.trevorism.kraken.model.Asset
 import com.trevorism.kraken.model.AssetBalance
 import com.trevorism.kraken.util.AssetCache
@@ -21,15 +22,19 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
     private final HeadersHttpClient httpClient = new HeadersBlankHttpClient()
     private final Properties properties
 
-    private String apiKey
-    private String apiSecret
+    private final String apiKey
+    private final String apiSecret
 
     DefaultPrivateKrakenClient() {
-        properties = new Properties()
-        properties.load(DefaultPrivateKrakenClient.class.getClassLoader().getResourceAsStream("secrets.properties") as InputStream)
+        this("secrets.properties")
+    }
 
-        apiKey = properties.getProperty("apiKey")
-        apiSecret = properties.getProperty("apiSecret")
+    DefaultPrivateKrakenClient(String propertiesFileName) {
+        properties = new Properties()
+        properties.load(DefaultPrivateKrakenClient.class.getClassLoader().getResourceAsStream(propertiesFileName) as InputStream)
+
+        this.apiKey = properties.getProperty("apiKey")
+        this.apiSecret = properties.getProperty("apiSecret")
     }
 
     DefaultPrivateKrakenClient(String apiKey, String apiSecret) {
@@ -45,6 +50,10 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
     }
 
     private Set<AssetBalance> mapResponseIntoAssetBalances(Map content) {
+        if (content.error) {
+            throw new KrakenRequestException(content.error.toString())
+        }
+
         def allAssets = AssetCache.INSTANCE.get()
         def values = content.result
         return values.findAll { k, v ->

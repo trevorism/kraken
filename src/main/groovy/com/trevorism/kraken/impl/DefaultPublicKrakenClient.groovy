@@ -5,6 +5,7 @@ import com.trevorism.http.headers.HeadersBlankHttpClient
 import com.trevorism.http.headers.HeadersHttpClient
 import com.trevorism.http.util.ResponseUtils
 import com.trevorism.kraken.PublicKrakenClient
+import com.trevorism.kraken.error.KrakenRequestException
 import com.trevorism.kraken.model.*
 import org.apache.http.client.methods.CloseableHttpResponse
 
@@ -46,7 +47,7 @@ class DefaultPublicKrakenClient implements PublicKrakenClient {
 
     @Override
     List<Candle> getCandles(String assetPair, Duration duration = ValidCandleDurations.DAY) {
-        if(!ValidCandleDurations.validate(duration)){
+        if (!ValidCandleDurations.validate(duration)) {
             duration = ValidCandleDurations.DAY
         }
         long minutes = duration.toMinutes()
@@ -55,7 +56,17 @@ class DefaultPublicKrakenClient implements PublicKrakenClient {
         return mapResponseIntoCandles(content, duration)
     }
 
-    private List<Candle> mapResponseIntoCandles(Map content, Duration duration) {
+    private def makeKrakenPublicGetRequest(String url) {
+        CloseableHttpResponse response = httpClient.get(url, headersMap)
+        String json = ResponseUtils.getEntity(response)
+        return gson.fromJson(json, Map)
+    }
+
+    private static List<Candle> mapResponseIntoCandles(Map content, Duration duration) {
+        if (content.error) {
+            throw new KrakenRequestException(content.error.toString())
+        }
+
         List<Candle> candles = []
 
         content.result.findAll { k, v ->
@@ -71,14 +82,22 @@ class DefaultPublicKrakenClient implements PublicKrakenClient {
         return candles
     }
 
-    private List<Asset> mapResponseToAssets(Map content) {
+    private static  List<Asset> mapResponseToAssets(Map content) {
+        if (content.error) {
+            throw new KrakenRequestException(content.error.toString())
+        }
+
         def values = content.result
         return values.collect { k, v ->
             new Asset(assetName: v.altname, decimals: v.decimals, displayDecimals: v.display_decimals, krakenName: k)
         }
     }
 
-    private List<AssetPair> mapResponseToAssetPairs(Map content) {
+    private static  List<AssetPair> mapResponseToAssetPairs(Map content) {
+        if (content.error) {
+            throw new KrakenRequestException(content.error.toString())
+        }
+
         def values = content.result
         return values.findAll { k, v ->
             v.wsname
@@ -93,10 +112,14 @@ class DefaultPublicKrakenClient implements PublicKrakenClient {
         }
     }
 
-    private Price mapResponseIntoPrice(Map content) {
-        def values = content.result;
+    private static Price mapResponseIntoPrice(Map content) {
+        if (content.error) {
+            throw new KrakenRequestException(content.error.toString())
+        }
 
-        Price price = new Price();
+        def values = content.result
+
+        Price price = new Price()
 
         values.each { k, v ->
             price.ask = v.a[0] as Double
@@ -106,11 +129,4 @@ class DefaultPublicKrakenClient implements PublicKrakenClient {
 
         return price
     }
-
-    private def makeKrakenPublicGetRequest(String url) {
-        CloseableHttpResponse response = httpClient.get(url, headersMap)
-        String json = ResponseUtils.getEntity(response)
-        return gson.fromJson(json, Map)
-    }
-
 }
