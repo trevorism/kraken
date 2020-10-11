@@ -1,7 +1,7 @@
 package com.trevorism.kraken.util
 
-import org.junit.Test
 import org.apache.commons.codec.binary.Base64
+import org.junit.Test
 
 class KrakenSignatureTest extends GroovyTestCase {
 
@@ -31,14 +31,14 @@ class KrakenSignatureTest extends GroovyTestCase {
 
     @Test
     void testConcatByteArrays() {
-        byte [] byteArr1 = [12,15].toArray()
-        byte [] byteArr2 = [76,45].toArray()
+        byte[] byteArr1 = [12, 15].toArray()
+        byte[] byteArr2 = [76, 45].toArray()
 
         def result = KrakenSignature.concatByteArrays(byteArr1, byteArr2)
-        assert result == [12,15,76,45].toArray()
+        assert result == [12, 15, 76, 45].toArray()
 
         result = KrakenSignature.concatByteArrays(byteArr2, byteArr1)
-        assert result == [76,45,12,15].toArray()
+        assert result == [76, 45, 12, 15].toArray()
 
     }
 }

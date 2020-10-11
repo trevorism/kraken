@@ -3,27 +3,23 @@ package com.trevorism.kraken.impl
 import com.trevorism.kraken.KrakenClient
 import com.trevorism.kraken.PrivateKrakenClient
 import com.trevorism.kraken.PublicKrakenClient
-import com.trevorism.kraken.model.Asset
-import com.trevorism.kraken.model.AssetBalance
-import com.trevorism.kraken.model.AssetPair
-import com.trevorism.kraken.model.Candle
-import com.trevorism.kraken.model.DateRange
-import com.trevorism.kraken.model.Order
-import com.trevorism.kraken.model.Price
-import com.trevorism.kraken.model.ValidCandleDurations
+import com.trevorism.kraken.model.*
+import com.trevorism.kraken.model.trade.CancelOrderResult
+import com.trevorism.kraken.model.trade.Trade
+import com.trevorism.kraken.model.trade.TradeResult
 
 import java.time.Duration
 
-class DefaultKrakenClient implements KrakenClient{
+class DefaultKrakenClient implements KrakenClient {
 
     private PublicKrakenClient publicKrakenClient = new DefaultPublicKrakenClient()
     private PrivateKrakenClient privateKrakenClient
 
-    DefaultKrakenClient(){
+    DefaultKrakenClient() {
         privateKrakenClient = new DefaultPrivateKrakenClient()
     }
 
-    DefaultKrakenClient(PrivateKrakenClient privateKrakenClient){
+    DefaultKrakenClient(PrivateKrakenClient privateKrakenClient) {
         this.privateKrakenClient = privateKrakenClient
     }
 
@@ -65,5 +61,15 @@ class DefaultKrakenClient implements KrakenClient{
     @Override
     List<Order> getOpenOrders(DateRange dateRange) {
         privateKrakenClient.getOpenOrders()
+    }
+
+    @Override
+    TradeResult createOrder(Trade tradeInfo) {
+        privateKrakenClient.createOrder(tradeInfo)
+    }
+
+    @Override
+    CancelOrderResult deleteOrder(String transactionId) {
+        privateKrakenClient.deleteOrder(transactionId)
     }
 }

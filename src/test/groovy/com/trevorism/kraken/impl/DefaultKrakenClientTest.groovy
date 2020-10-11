@@ -2,13 +2,11 @@ package com.trevorism.kraken.impl
 
 import com.trevorism.kraken.PrivateKrakenClient
 import com.trevorism.kraken.PublicKrakenClient
-import com.trevorism.kraken.model.Asset
-import com.trevorism.kraken.model.AssetBalance
-import com.trevorism.kraken.model.AssetPair
-import com.trevorism.kraken.model.Candle
-import com.trevorism.kraken.model.DateRange
-import com.trevorism.kraken.model.Order
-import com.trevorism.kraken.model.Price
+import com.trevorism.kraken.model.*
+import com.trevorism.kraken.model.trade.CancelOrderResult
+import com.trevorism.kraken.model.trade.MarketTrade
+import com.trevorism.kraken.model.trade.Trade
+import com.trevorism.kraken.model.trade.TradeResult
 import org.junit.Test
 
 import java.time.Duration
@@ -16,15 +14,15 @@ import java.time.Duration
 class DefaultKrakenClientTest {
 
     @Test
-    void testConstructor(){
+    void testConstructor() {
         def client = new DefaultKrakenClient()
         assert client.publicKrakenClient
         assert client.privateKrakenClient
     }
 
     @Test
-    void testConstructorNull(){
-        def client = new DefaultKrakenClient(new DefaultPrivateKrakenClient("key","secret"))
+    void testConstructorNull() {
+        def client = new DefaultKrakenClient(new DefaultPrivateKrakenClient("key", "secret"))
         assert client.publicKrakenClient
         assert client.privateKrakenClient
     }
@@ -41,9 +39,13 @@ class DefaultKrakenClientTest {
         assert client.getCurrentPrice("TESTUSD")
         assert client.getCandles("TESTUSD", Duration.ofDays(1))
         assert client.getAccountBalances()
+        assert client.getOpenOrders(null)
+        assert client.getClosedOrders(null)
+        assert client.createOrder(new MarketTrade("USDUSDT", "buy", 10))
+        assert client.deleteOrder("654321-open")
     }
 
-    class TestPublicKrakenClient implements PublicKrakenClient{
+    class TestPublicKrakenClient implements PublicKrakenClient {
         @Override
         long serverTime() {
             1
@@ -56,7 +58,7 @@ class DefaultKrakenClientTest {
 
         @Override
         List<AssetPair> getAssetPairs() {
-            [new AssetPair(pairName:"TESTUSD", baseName: "TEST", quoteName: "USD")]
+            [new AssetPair(pairName: "TESTUSD", baseName: "TEST", quoteName: "USD")]
         }
 
         @Override
@@ -73,7 +75,7 @@ class DefaultKrakenClientTest {
         }
     }
 
-    class TestPrivateKrakenClient implements PrivateKrakenClient{
+    class TestPrivateKrakenClient implements PrivateKrakenClient {
 
         @Override
         Set<AssetBalance> getAccountBalances() {
@@ -82,12 +84,22 @@ class DefaultKrakenClientTest {
 
         @Override
         List<Order> getClosedOrders(DateRange dateRange) {
-            return null
+            return [new Order(orderId: "123456-closed")]
         }
 
         @Override
         List<Order> getOpenOrders(DateRange dateRange) {
-            return null
+            return [new Order(orderId: "654321-open")]
+        }
+
+        @Override
+        TradeResult createOrder(Trade tradeInfo) {
+            return new TradeResult(orderDescription: "", transactionIds: ["654321-open"])
+        }
+
+        @Override
+        CancelOrderResult deleteOrder(String transactionId) {
+            return new CancelOrderResult(count: 1)
         }
     }
 

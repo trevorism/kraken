@@ -3,6 +3,7 @@ package com.trevorism.kraken.model;
 import java.util.Date;
 
 public class Order {
+    private String orderId;
     private String pair;
     private String type;
     private String orderType;
@@ -25,6 +26,14 @@ public class Order {
 
     private String misc;
     private String oflags;
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
     public String getPair() {
         return pair;
@@ -178,28 +187,4 @@ public class Order {
         this.oflags = oflags;
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "pair='" + pair + '\'' +
-                ", type='" + type + '\'' +
-                ", orderType='" + orderType + '\'' +
-                ", status='" + status + '\'' +
-                ", reason='" + reason + '\'' +
-                ", amount=" + amount +
-                ", amountExecuted=" + amountExecuted +
-                ", cost=" + cost +
-                ", fee=" + fee +
-                ", price=" + price +
-                ", stopPrice=" + stopPrice +
-                ", limitPrice=" + limitPrice +
-                ", leverage='" + leverage + '\'' +
-                ", openDate=" + openDate +
-                ", closedDate=" + closedDate +
-                ", startDate=" + startDate +
-                ", expireDate=" + expireDate +
-                ", misc='" + misc + '\'' +
-                ", oflags='" + oflags + '\'' +
-                '}';
-    }
 }

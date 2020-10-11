@@ -10,24 +10,26 @@ import com.trevorism.kraken.model.Asset
 import com.trevorism.kraken.model.AssetBalance
 import com.trevorism.kraken.model.DateRange
 import com.trevorism.kraken.model.Order
+import com.trevorism.kraken.model.trade.CancelOrderResult
+import com.trevorism.kraken.model.trade.Trade
+import com.trevorism.kraken.model.trade.TradeResult
 import com.trevorism.kraken.util.AssetCache
 import com.trevorism.kraken.util.KrakenSignature
 import com.trevorism.secure.PropertiesProvider
 import org.apache.http.client.methods.CloseableHttpResponse
 import org.jasypt.util.text.StrongTextEncryptor
 
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.temporal.TemporalAmount
+import java.text.DecimalFormat
 
 class DefaultPrivateKrakenClient implements PrivateKrakenClient {
 
     private static final String API_PREFIX = "https://api.kraken.com"
 
     private static final double EPSILON = 0.0001d
+    public static final String PRIVATE_URL_PREFIX = "https://api.kraken.com/0/private"
 
     private final Gson gson = new Gson()
-    private final HeadersHttpClient httpClient = new HeadersBlankHttpClient()
+    private HeadersHttpClient httpClient = new HeadersBlankHttpClient()
     private final Properties properties
 
     private final String apiKey
@@ -37,49 +39,63 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
         this("secrets.properties")
     }
 
-    //The code using this must inject the appropriate files..
-    DefaultPrivateKrakenClient(String propertiesFileName) {
-        properties = new Properties()
-        properties.load(DefaultPrivateKrakenClient.class.getClassLoader().getResourceAsStream(propertiesFileName) as InputStream)
-        StrongTextEncryptor encryptor = createEncryptor()
-
-        this.apiKey = properties.getProperty("apiKey")
-        this.apiSecret = encryptor.decrypt(properties.getProperty("apiSecret"))
-    }
-
     DefaultPrivateKrakenClient(String apiKey, String apiSecret) {
         this.apiKey = apiKey
         this.apiSecret = apiSecret
     }
 
+    //Using Encryption on properties files adds a layer of security.
+    DefaultPrivateKrakenClient(String propertiesFileName) {
+        properties = new Properties()
+        properties.load(DefaultPrivateKrakenClient.class.getClassLoader().getResourceAsStream(propertiesFileName) as InputStream)
+        StrongTextEncryptor encryptor = createEncryptor()
+        this.apiKey = properties.getProperty("apiKey")
+        this.apiSecret = encryptor.decrypt(properties.getProperty("apiSecret"))
+    }
+
     @Override
     Set<AssetBalance> getAccountBalances() {
-        String url = "https://api.kraken.com/0/private/Balance"
+        String url = "$PRIVATE_URL_PREFIX/Balance"
         def content = makeKrakenPrivateRequest(url)
         return mapResponseIntoAssetBalances(content)
     }
 
     @Override
     List<Order> getClosedOrders(DateRange dateRange) {
-        String url = "https://api.kraken.com/0/private/ClosedOrders"
+        String url = "$PRIVATE_URL_PREFIX/ClosedOrders"
         LinkedHashMap<String, Long> inputMap = createInputMapFromDateRange(dateRange)
 
-
         def content = makeKrakenPrivateRequest(url, inputMap)
-        return mapResponseIntoOrders(content)
+        return mapResponseIntoOrders(content, "closed")
     }
 
     @Override
     List<Order> getOpenOrders(DateRange dateRange) {
-        String url = "https://api.kraken.com/0/private/OpenOrders"
+        String url = "$PRIVATE_URL_PREFIX/OpenOrders"
         LinkedHashMap<String, Long> inputMap = createInputMapFromDateRange(dateRange)
 
         def content = makeKrakenPrivateRequest(url, inputMap)
-        return mapResponseIntoOrders(content)
+        return mapResponseIntoOrders(content, "open")
     }
 
-    private LinkedHashMap<String, Long> createInputMapFromDateRange(DateRange dateRange) {
-        Map<String, Long> inputMap = [:]
+    @Override
+    TradeResult createOrder(Trade tradeInfo) {
+        String url = "$PRIVATE_URL_PREFIX/AddOrder"
+        LinkedHashMap<String, Long> inputMap = createInputMapFromTrade(tradeInfo)
+        def content = makeKrakenPrivateRequest(url, inputMap)
+        return mapResponseIntoTradeResult(content)
+
+    }
+
+    @Override
+    CancelOrderResult deleteOrder(String transactionId) {
+        String url = "$PRIVATE_URL_PREFIX/CancelOrder"
+        def content = makeKrakenPrivateRequest(url, [txid: transactionId])
+        return mapResponseIntoCancelOrderResult(content)
+    }
+
+    private def createInputMapFromDateRange(DateRange dateRange) {
+        def inputMap = [:]
         if (dateRange?.startDate != null)
             inputMap.put("start", dateRange.startDate.getTime() / 1000)
         if (dateRange?.endDate != null)
@@ -118,7 +134,6 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
         return encryptor
     }
 
-
     private Set<AssetBalance> mapResponseIntoAssetBalances(Map content) {
         if (content.error) {
             throw new KrakenRequestException(content.error.toString())
@@ -134,31 +149,61 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
         } as Set
     }
 
-    private List<Order> mapResponseIntoOrders(Map content) {
+    private List<Order> mapResponseIntoOrders(Map content, String openOrClosed) {
         if (content.error) {
             throw new KrakenRequestException(content.error.toString())
         }
 
-        def values = content.result.closed
+        def values = content.result."$openOrClosed"
         return values.collect { k, v ->
-            def thing = convertDataIntoOrder(v)
-            println thing
-            return thing
+            convertDataIntoOrder(k, v)
         }
-
     }
 
-    Order convertDataIntoOrder(Map data) {
+    private static Order convertDataIntoOrder(String key, Map data) {
         Date openTime = data.opentm == 0 ? null : new Date((long)(data.opentm * 1000))
-        Date closedTime = data.closetm == 0 ? null : new Date((long)(data.closetm * 1000))
-        Date startTime = data.starttm == 0 ? null : new Date((long)(data.starttm * 1000))
-        Date expireTime = data.expiretm == 0 ? null : new Date((long)(data.expiretm * 1000))
+        Date closedTime = (data.closetm == 0 || data.closetm == null) ? null : new Date((long)(data.closetm * 1000))
+        Date startTime = (data.starttm == 0 || data.starttm == null) ? null : new Date((long)(data.starttm * 1000))
+        Date expireTime = (data.expiretm == 0 || data.expiretm == null) ? null : new Date((long)(data.expiretm * 1000))
         Double price = Double.valueOf(data.price) == 0 ? Double.valueOf(data.descr.price) : Double.valueOf(data.price)
 
-       return new Order(pair: data.descr.pair, type:data.descr.type, orderType: data.descr.ordertype,
+       return new Order(orderId: key, pair: data.descr.pair, type:data.descr.type, orderType: data.descr.ordertype,
                status: data.status, reason: data.reason, amount: Double.valueOf(data.vol), amountExecuted: Double.valueOf(data.vol_exec),
        cost: Double.valueOf(data.cost), fee: Double.valueOf(data.fee), price: price, stopPrice: Double.valueOf(data.stopprice), limitPrice: Double.valueOf(data.limitprice),
        leverage: data.descr.leverage, openDate: openTime, closedDate: closedTime, startDate: startTime, expireDate: expireTime,
        misc: data.misc, oflags: data.oflags)
+    }
+
+    TradeResult mapResponseIntoTradeResult(Map content) {
+        if (content.error) {
+            throw new KrakenRequestException(content.error.toString())
+        }
+        new TradeResult(orderDescription: content.result.descr.order, closeDescription: content.result.descr.close, transactionIds: content.result.txid )
+    }
+
+    LinkedHashMap<String, Object> createInputMapFromTrade(Trade trade) {
+        def inputMap = [pair: trade.pair, type: trade.buyOrSell, ordertype: trade.orderType, volume: trade.amount]
+        if(trade.price){
+            DecimalFormat df = new DecimalFormat("#")
+            df.setMaximumFractionDigits(10)
+            inputMap.put("price", df.format(trade.price))
+        }
+        if(trade.startDate){
+            inputMap.put("starttm", trade.startDate.getTime() / 1000)
+        }
+        if(trade.expireDate){
+            inputMap.put("expiretm", trade.expireDate.getTime() / 1000)
+        }
+        if(trade.validateOnly){
+            inputMap.put("validate", trade.validateOnly)
+        }
+        return inputMap
+    }
+
+    CancelOrderResult mapResponseIntoCancelOrderResult(Map content) {
+        if (content.error) {
+            throw new KrakenRequestException(content.error.toString())
+        }
+        new CancelOrderResult(count: content.result.count, pending: content.result.pending)
     }
 }

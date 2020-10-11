@@ -30,7 +30,7 @@ class DefaultPublicKrakenClientTest {
     }
 
     @Test
-    void "get asset pairs"(){
+    void "get asset pairs"() {
         PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def assetPairs = defaultKrakenClient.assetPairs
         println assetPairs
@@ -40,7 +40,7 @@ class DefaultPublicKrakenClientTest {
     }
 
     @Test
-    void "get price"(){
+    void "get price"() {
         PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         Price price = defaultKrakenClient.getCurrentPrice("XBTUSD")
 
@@ -51,7 +51,7 @@ class DefaultPublicKrakenClientTest {
     }
 
     @Test
-    void "get daily candles"(){
+    void "get daily candles"() {
         PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def candles = defaultKrakenClient.getCandles("XBTUSD")
 
@@ -61,7 +61,7 @@ class DefaultPublicKrakenClientTest {
     }
 
     @Test
-    void "get five minute candles"(){
+    void "get five minute candles"() {
         PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def candles = defaultKrakenClient.getCandles("XBTUSD", ValidCandleDurations.FIVE_MINUTES)
 

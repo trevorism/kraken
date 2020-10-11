@@ -47,10 +47,6 @@ processResources{
 processTestResources{
 	doLast{
 		copy{
-			from "${System.getProperty("user.home")}/${project.name}/secrets.properties"
-			into "build/resources/test"
-		}
-		copy{
 			from "${System.getProperty("user.home")}/${project.name}/secrets.properties.expired"
 			into "build/resources/test"
 		}
