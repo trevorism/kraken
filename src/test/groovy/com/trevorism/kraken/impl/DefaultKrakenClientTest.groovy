@@ -15,7 +15,7 @@ class DefaultKrakenClientTest {
 
     @Test
     void testConstructor() {
-        def client = new DefaultKrakenClient()
+        def client = new DefaultKrakenClient(new DefaultPrivateKrakenClient("key", "secret"))
         assert client.publicKrakenClient
         assert client.privateKrakenClient
     }
@@ -29,7 +29,7 @@ class DefaultKrakenClientTest {
 
     @Test
     void testFunctions() {
-        def client = new DefaultKrakenClient()
+        def client = new DefaultKrakenClient(new DefaultPrivateKrakenClient("key", "secret"))
         client.publicKrakenClient = new TestPublicKrakenClient()
         client.privateKrakenClient = new TestPrivateKrakenClient()
 
