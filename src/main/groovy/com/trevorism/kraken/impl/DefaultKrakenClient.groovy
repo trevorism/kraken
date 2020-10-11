@@ -7,6 +7,8 @@ import com.trevorism.kraken.model.Asset
 import com.trevorism.kraken.model.AssetBalance
 import com.trevorism.kraken.model.AssetPair
 import com.trevorism.kraken.model.Candle
+import com.trevorism.kraken.model.DateRange
+import com.trevorism.kraken.model.Order
 import com.trevorism.kraken.model.Price
 import com.trevorism.kraken.model.ValidCandleDurations
 
@@ -51,8 +53,17 @@ class DefaultKrakenClient implements KrakenClient{
     }
 
     @Override
-    Set<AssetBalance> getAccountBalance() {
-        privateKrakenClient.getAccountBalance()
+    Set<AssetBalance> getAccountBalances() {
+        privateKrakenClient.getAccountBalances()
     }
 
+    @Override
+    List<Order> getClosedOrders(DateRange dateRange) {
+        privateKrakenClient.getClosedOrders()
+    }
+
+    @Override
+    List<Order> getOpenOrders(DateRange dateRange) {
+        privateKrakenClient.getOpenOrders()
+    }
 }

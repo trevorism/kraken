@@ -8,24 +8,11 @@
 
 Java client wrapping [kraken.com](https://www.kraken.com/en-us/features/api)
 
-Current version: 0.2.0
+Current version: 0.3.0
 
 ## How to Use 
-Add a `secrets.properties` file in src/main/resources with the following content:
-
-```properties
-apiKey=<apikey>
-apiSecret=<apisecret>
-```
-
-Then 
-
-```java
-KrakenClient krakenClient = new DefaultKrakenClient();
-krakenClient.getCurrentPrice("XBTUSD");
-```
-
-If you want to inject your api key and secret using some other way:
+Kraken has a public and private API. This code uses a wrapper client which delegates to a 
+`DefaultPublicKrakenClient` and `DefaultPrivateKrakenClient`. Here's how to create it:
 
 ```java
 String apiKey = "...";

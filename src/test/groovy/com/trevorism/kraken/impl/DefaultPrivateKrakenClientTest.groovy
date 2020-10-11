@@ -9,7 +9,9 @@ class DefaultPrivateKrakenClientTest {
     //@Test
     void testGetAccountBalanceNoArgConstructor() {
         PrivateKrakenClient privateKrakenClient = new DefaultPrivateKrakenClient()
-        def balances = privateKrakenClient.getAccountBalance()
+        def balances = privateKrakenClient.getAccountBalances()
+
+        println balances
 
         assert balances
         def first = balances[0]
@@ -18,16 +20,23 @@ class DefaultPrivateKrakenClientTest {
         assert first.balance > DefaultPrivateKrakenClient.EPSILON
     }
 
-    @Test
+    //@Test
     void testGetAccountBalanceWithExpiredKeys() {
         PrivateKrakenClient privateKrakenClient = new DefaultPrivateKrakenClient("secrets.properties.expired")
 
         try {
-            def balances = privateKrakenClient.getAccountBalance()
+            def balances = privateKrakenClient.getAccountBalances()
             assert false
         }
         catch (KrakenRequestException kre){
             assert kre.message == "[EAPI:Invalid key]"
         }
+    }
+
+    //@Test
+    void testNewThing(){
+        def client = new DefaultPrivateKrakenClient()
+        println client.getOpenOrders().size()
+
     }
 }

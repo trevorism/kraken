@@ -6,6 +6,8 @@ import com.trevorism.kraken.model.Asset
 import com.trevorism.kraken.model.AssetBalance
 import com.trevorism.kraken.model.AssetPair
 import com.trevorism.kraken.model.Candle
+import com.trevorism.kraken.model.DateRange
+import com.trevorism.kraken.model.Order
 import com.trevorism.kraken.model.Price
 import org.junit.Test
 
@@ -38,7 +40,7 @@ class DefaultKrakenClientTest {
         assert client.getAssetPairs()
         assert client.getCurrentPrice("TESTUSD")
         assert client.getCandles("TESTUSD", Duration.ofDays(1))
-        assert client.getAccountBalance()
+        assert client.getAccountBalances()
     }
 
     class TestPublicKrakenClient implements PublicKrakenClient{
@@ -74,8 +76,18 @@ class DefaultKrakenClientTest {
     class TestPrivateKrakenClient implements PrivateKrakenClient{
 
         @Override
-        Set<AssetBalance> getAccountBalance() {
+        Set<AssetBalance> getAccountBalances() {
             [new AssetBalance(assetName: "test", balance: 5.0)]
+        }
+
+        @Override
+        List<Order> getClosedOrders(DateRange dateRange) {
+            return null
+        }
+
+        @Override
+        List<Order> getOpenOrders(DateRange dateRange) {
+            return null
         }
     }
 
