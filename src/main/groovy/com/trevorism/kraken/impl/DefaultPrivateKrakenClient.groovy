@@ -167,7 +167,7 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
         Date expireTime = (data.expiretm == 0 || data.expiretm == null) ? null : new Date((long)(data.expiretm * 1000))
         Double price = Double.valueOf(data.price) == 0 ? Double.valueOf(data.descr.price) : Double.valueOf(data.price)
 
-       return new Order(orderId: key, pair: data.descr.pair, type:data.descr.type, orderType: data.descr.ordertype,
+       return new Order(orderId: key, pair: data.descr.pair, buyOrSell:data.descr.type, orderType: data.descr.ordertype,
                status: data.status, reason: data.reason, amount: Double.valueOf(data.vol), amountExecuted: Double.valueOf(data.vol_exec),
        cost: Double.valueOf(data.cost), fee: Double.valueOf(data.fee), price: price, stopPrice: Double.valueOf(data.stopprice), limitPrice: Double.valueOf(data.limitprice),
        leverage: data.descr.leverage, openDate: openTime, closedDate: closedTime, startDate: startTime, expireDate: expireTime,

@@ -6,34 +6,40 @@ public abstract class Trade {
 
     protected String orderType;
 
-    private final String pair;
-    private final String buyOrSell;
-    private final double amount;
+    protected String pair;
+    protected String buyOrSell;
+    protected double amount;
 
-    private Date startDate;
-    private Date expireDate;
-    private boolean validateOnly;
+    protected Date startDate;
+    protected Date expireDate;
+    protected boolean validateOnly;
 
-    public Trade(String pair, String buyOrSell, double amount) {
-        this.pair = pair;
-        this.buyOrSell = buyOrSell;
-        this.amount = amount;
+    public String getOrderType() {
+        return orderType;
     }
 
     public String getPair() {
         return pair;
     }
 
+    public void setPair(String pair) {
+        this.pair = pair;
+    }
+
     public String getBuyOrSell() {
         return buyOrSell;
     }
 
-    public String getOrderType() {
-        return orderType;
+    public void setBuyOrSell(String buyOrSell) {
+        this.buyOrSell = buyOrSell;
     }
 
-    public void setOrderType(String orderType) {
-        this.orderType = orderType;
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
     public Date getStartDate() {
@@ -60,7 +66,16 @@ public abstract class Trade {
         this.validateOnly = validateOnly;
     }
 
-    public double getAmount() {
-        return amount;
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(buyOrSell);
+        stringBuilder.append(" ");
+        stringBuilder.append(amount);
+        stringBuilder.append(" ");
+        stringBuilder.append(pair);
+        stringBuilder.append(" ");
+        stringBuilder.append(orderType);
+        return stringBuilder.toString();
     }
 }

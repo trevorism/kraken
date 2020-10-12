@@ -22,7 +22,7 @@ class DefaultKrakenClientTest {
 
     @Test
     void testConstructorNull() {
-        def client = new DefaultKrakenClient(new DefaultPrivateKrakenClient("key", "secret"))
+        def client = new DefaultKrakenClient(new DefaultPrivateKrakenClient(null, null))
         assert client.publicKrakenClient
         assert client.privateKrakenClient
     }
@@ -41,7 +41,7 @@ class DefaultKrakenClientTest {
         assert client.getAccountBalances()
         assert client.getOpenOrders(null)
         assert client.getClosedOrders(null)
-        assert client.createOrder(new MarketTrade("USDUSDT", "buy", 10))
+        assert client.createOrder(new MarketTrade(pair: "USDUSDT", buyOrSell: "buy", amount: 10))
         assert client.deleteOrder("654321-open")
     }
 

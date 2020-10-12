@@ -1,17 +1,24 @@
 package com.trevorism.kraken.model.trade;
 
-public class LimitTrade extends Trade {
+public final class LimitTrade extends Trade {
 
-    private final double price;
+    private double price;
 
-    public LimitTrade(String pair, String buyOrSell, double amount, double price) {
-        super(pair, buyOrSell, amount);
-        orderType = "limit";
-        this.price = price;
+    public LimitTrade() {
+        this.orderType = "limit";
     }
 
     public double getPrice() {
         return price;
     }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        String prefix = super.toString();
+        return prefix + " @ " + price;
+    }
 }

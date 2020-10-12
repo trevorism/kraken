@@ -1,17 +1,24 @@
 package com.trevorism.kraken.model.trade;
 
-public class StopLossTrade extends Trade {
+public final class StopLossTrade extends Trade {
 
-    private final double price;
+    private double price;
 
-    public StopLossTrade(String pair, String buyOrSell, double amount, double price) {
-        super(pair, buyOrSell, amount);
+    public StopLossTrade() {
         orderType = "stop-loss";
-        this.price = price;
     }
 
     public double getPrice() {
         return price;
     }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        String prefix = super.toString();
+        return prefix + " @ " + price;
+    }
 }

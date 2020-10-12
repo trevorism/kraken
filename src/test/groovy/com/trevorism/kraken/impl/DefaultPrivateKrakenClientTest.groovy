@@ -60,7 +60,7 @@ class DefaultPrivateKrakenClientTest {
     @Test
     void testCreateOrder() {
         mockHttpCallForTrade()
-        def result = privateKrakenClient.createOrder(new LimitTrade("XBTUSD", "buy", 1, 400d))
+        def result = privateKrakenClient.createOrder(new LimitTrade(pair:  "XBTUSD", buyOrSell: "buy", amount: 1, price: 400d))
         assert result
         assert result.orderDescription
         assert result.transactionIds

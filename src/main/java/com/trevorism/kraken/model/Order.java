@@ -5,7 +5,7 @@ import java.util.Date;
 public class Order {
     private String orderId;
     private String pair;
-    private String type;
+    private String buyOrSell;
     private String orderType;
     private String status;
     private String reason;
@@ -43,12 +43,12 @@ public class Order {
         this.pair = pair;
     }
 
-    public String getType() {
-        return type;
+    public String getBuyOrSell() {
+        return buyOrSell;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setBuyOrSell(String buyOrSell) {
+        this.buyOrSell = buyOrSell;
     }
 
     public String getOrderType() {
@@ -187,4 +187,20 @@ public class Order {
         this.oflags = oflags;
     }
 
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder(orderId);
+        stringBuilder.append(": ");
+        stringBuilder.append(buyOrSell);
+        stringBuilder.append(" ");
+        stringBuilder.append(amount);
+        stringBuilder.append(" ");
+        stringBuilder.append(pair);
+        stringBuilder.append(" ");
+        stringBuilder.append(orderType);
+        stringBuilder.append(" @ ");
+        stringBuilder.append(price);
+        stringBuilder.append(" is ");
+        stringBuilder.append(status);
+        return stringBuilder.toString();
+    }
 }
