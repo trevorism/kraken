@@ -183,7 +183,7 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
 
     LinkedHashMap<String, Object> createInputMapFromTrade(Trade trade) {
         def inputMap = [pair: trade.pair, type: trade.buyOrSell, ordertype: trade.orderType, volume: trade.amount]
-        if(trade.price){
+        if(trade?.price){
             DecimalFormat df = new DecimalFormat("#")
             df.setMaximumFractionDigits(10)
             inputMap.put("price", df.format(trade.price))
