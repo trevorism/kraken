@@ -3,8 +3,10 @@ package com.trevorism.kraken.impl
 import com.google.gson.Gson
 import com.trevorism.http.headers.HeadersHttpClient
 import com.trevorism.kraken.PrivateKrakenClient
+import com.trevorism.kraken.error.KrakenRequestException
 import com.trevorism.kraken.model.DateRange
 import com.trevorism.kraken.model.trade.LimitTrade
+import com.trevorism.kraken.model.trade.MarketTrade
 import org.apache.http.client.methods.CloseableHttpResponse
 import org.apache.http.entity.StringEntity
 import org.junit.Before
@@ -67,11 +69,27 @@ class DefaultPrivateKrakenClientTest {
     }
 
     @Test
+    void testCreateMarketOrder() {
+        mockHttpCallForTrade()
+        def result = privateKrakenClient.createOrder(new MarketTrade(pair:  "XBTUSD", buyOrSell: "buy", amount: 1))
+        assert result
+        assert result.orderDescription
+        assert result.transactionIds
+    }
+
+
+    @Test
     void testDeleteOrder() {
         mockHttpCallForDeletion()
         def result = privateKrakenClient.deleteOrder("transactionId1")
         assert result
         assert result.count
+    }
+
+    @Test(expected = KrakenRequestException)
+    void validateOrder() {
+        def marketTrade = new MarketTrade(pair: "XBTUSD", buyOrSell: "buy", amount: 0)
+        privateKrakenClient.validateTrade(marketTrade)
     }
 
     private void mockHttpCallForOrders(String closedOrOpen) {

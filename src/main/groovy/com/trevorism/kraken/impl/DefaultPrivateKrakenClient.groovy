@@ -81,6 +81,7 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
     @Override
     TradeResult createOrder(Trade tradeInfo) {
         String url = "$PRIVATE_URL_PREFIX/AddOrder"
+        validateTrade(tradeInfo)
         LinkedHashMap<String, Long> inputMap = createInputMapFromTrade(tradeInfo)
         def content = makeKrakenPrivateRequest(url, inputMap)
         return mapResponseIntoTradeResult(content)
@@ -183,7 +184,7 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
 
     LinkedHashMap<String, Object> createInputMapFromTrade(Trade trade) {
         def inputMap = [pair: trade.pair, type: trade.buyOrSell, ordertype: trade.orderType, volume: trade.amount]
-        if(trade?.price){
+        if(trade.hasProperty("price")){
             DecimalFormat df = new DecimalFormat("#")
             df.setMaximumFractionDigits(10)
             inputMap.put("price", df.format(trade.price))
@@ -205,5 +206,16 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
             throw new KrakenRequestException(content.error.toString())
         }
         new CancelOrderResult(count: content.result.count, pending: content.result.pending)
+    }
+
+    private static void validateTrade(Trade trade) {
+        if(trade.hasProperty("price")){
+            if(trade.price <= 0){
+                throw new KrakenRequestException("Price must be > 0");
+            }
+        }
+        if(trade.amount <= 0){
+            throw new KrakenRequestException("Amount of currency purchased must be > 0")
+        }
     }
 }

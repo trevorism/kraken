@@ -8,7 +8,7 @@
 
 Java client wrapping [kraken.com](https://www.kraken.com/en-us/features/api)
 
-Current version: 0.4.1
+Current version: 0.5.0
 
 ## How to Use 
 Kraken has a public and private API. This code uses a wrapper client which delegates to a 
