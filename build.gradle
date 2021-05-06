@@ -2,11 +2,11 @@ buildscript {
 	repositories {
 		mavenCentral()
 		maven {
-			url uri("http://trevorism-build.eastus.cloudapp.azure.com/nexus/repository/maven-releases")
+			url uri("https://trevorism-build.eastus.cloudapp.azure.com/nexus/repository/maven-releases")
 		}
 	}
 	dependencies {
-		classpath 'com.trevorism:gradle-release-plugin:0.4.0'
+		classpath 'com.trevorism:gradle-release-plugin:0.5.0'
 	}
 }
 
@@ -20,18 +20,17 @@ apply plugin: "com.trevorism.gradle.release"
 repositories {
 	mavenCentral()
 	maven {
-		url uri("http://trevorism-build.eastus.cloudapp.azure.com/nexus/repository/maven-releases")
+		url uri("https://trevorism-build.eastus.cloudapp.azure.com/nexus/repository/maven-releases")
 	}
 }
 
 dependencies {
-	implementation 'com.trevorism:http-utils:1.1.0'
-	implementation 'com.trevorism:secure-utils:3.3.1'
+	implementation 'com.trevorism:secure-http-utils:0.7.0'
 	implementation 'com.google.code.gson:gson:2.8.6'
 	implementation 'org.jasypt:jasypt:1.9.3'
 	implementation 'org.codehaus.groovy:groovy-all:2.5.8'
 
-	testCompile 'junit:junit:4.13'
+	testCompile 'junit:junit:4.13.2'
 
 }
 
