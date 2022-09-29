@@ -16,7 +16,6 @@ import com.trevorism.kraken.model.trade.TradeResult
 import com.trevorism.kraken.util.AssetCache
 import com.trevorism.kraken.util.KrakenSignature
 import com.trevorism.secure.ClasspathBasedPropertiesProvider
-import com.trevorism.secure.PropertiesProvider
 import org.apache.http.client.methods.CloseableHttpResponse
 import org.jasypt.util.text.StrongTextEncryptor
 
@@ -24,14 +23,12 @@ import java.text.DecimalFormat
 
 class DefaultPrivateKrakenClient implements PrivateKrakenClient {
 
-    private static final String API_PREFIX = "https://api.kraken.com"
-
     private static final double EPSILON = 0.0001d
+    private static final String API_PREFIX = "https://api.kraken.com"
     public static final String PRIVATE_URL_PREFIX = "https://api.kraken.com/0/private"
 
     private final Gson gson = new Gson()
     private HeadersHttpClient httpClient = new HeadersBlankHttpClient()
-    private final PropertiesProvider propertiesProvider
 
     private final String apiKey
     private final String apiSecret
@@ -47,8 +44,8 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
 
     //Using Encryption on properties files adds a layer of security.
     DefaultPrivateKrakenClient(String propertiesFileName) {
-        propertiesProvider = new ClasspathBasedPropertiesProvider(propertiesFileName)
-        StrongTextEncryptor encryptor = createEncryptor()
+        def propertiesProvider = new ClasspathBasedPropertiesProvider(propertiesFileName)
+        StrongTextEncryptor encryptor = createEncryptor(propertiesProvider)
         this.apiKey = propertiesProvider.getProperty("apiKey")
         this.apiSecret = encryptor.decrypt(propertiesProvider.getProperty("apiSecret"))
     }
@@ -128,7 +125,7 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
         return builder.toString()
     }
 
-    private StrongTextEncryptor createEncryptor() {
+    private static StrongTextEncryptor createEncryptor(def propertiesProvider) {
         String encryptionKey = propertiesProvider.getProperty("encryptionKey")
         StrongTextEncryptor encryptor = new StrongTextEncryptor()
         encryptor.setPassword(encryptionKey)
