@@ -1,4 +1,4 @@
-import com.trevorism.secure.PropertiesProvider
+import com.trevorism.secure.ClasspathBasedPropertiesProvider
 import org.jasypt.util.text.StrongTextEncryptor
 
 class Encryptor {
@@ -7,7 +7,7 @@ class Encryptor {
 
     static void main(String[] args) {
         StrongTextEncryptor encryptor = new StrongTextEncryptor()
-        String encryptionKey = new PropertiesProvider("encryption.properties").getProperty("encryptionKey")
+        String encryptionKey = new ClasspathBasedPropertiesProvider().getProperty("encryptionKey")
 
         encryptor.setPassword(encryptionKey)
         def encrypted = encryptor.encrypt(THING_TO_ENCRYPT)

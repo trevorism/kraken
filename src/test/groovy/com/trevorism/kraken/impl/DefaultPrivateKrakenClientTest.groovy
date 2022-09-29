@@ -15,7 +15,7 @@ import org.junit.Test
 class DefaultPrivateKrakenClientTest {
 
     private Gson gson = new Gson()
-    private PrivateKrakenClient privateKrakenClient;
+    private PrivateKrakenClient privateKrakenClient
 
     @Before
     void setup() {

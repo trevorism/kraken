@@ -1,6 +1,5 @@
 # kraken
-![Jenkins](https://img.shields.io/jenkins/build/http/trevorism-build.eastus.cloudapp.azure.com/kraken)
-![Jenkins Coverage](https://img.shields.io/jenkins/coverage/jacoco/http/trevorism-build.eastus.cloudapp.azure.com/kraken)
+![Build](https://github.com/trevorism/kraken/actions/workflows/build.yml/badge.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/trevorism/kraken)
 ![GitHub language count](https://img.shields.io/github/languages/count/trevorism/kraken)
 ![GitHub top language](https://img.shields.io/github/languages/top/trevorism/kraken)
@@ -8,7 +7,7 @@
 
 Java client wrapping [kraken.com](https://www.kraken.com/en-us/features/api)
 
-Current version: 0.6.0
+Current [Version](https://github.com/trevorism/kraken/releases/latest)
 
 ## How to Use 
 Kraken has a public and private API. This code uses a wrapper client which delegates to a 

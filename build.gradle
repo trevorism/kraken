@@ -1,13 +1,20 @@
 buildscript {
-	repositories {
-		mavenCentral()
-		maven {
-			url uri("https://trevorism-build.eastus.cloudapp.azure.com/nexus/repository/maven-releases")
-		}
-	}
-	dependencies {
-		classpath 'com.trevorism:gradle-release-plugin:0.5.0'
-	}
+    ext {
+        creds = {
+            username = findProperty("github.user") ?: System.getenv("GITHUB_ACTOR")
+            password = findProperty("github.token") ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
+    repositories {
+        mavenCentral()
+        maven {
+            url uri("https://maven.pkg.github.com/trevorism/gradle-release-plugin")
+            credentials creds
+        }
+    }
+    dependencies {
+        classpath 'com.trevorism:gradle-release-plugin:0.7.0'
+    }
 }
 
 plugins{
@@ -19,37 +26,20 @@ apply plugin: "com.trevorism.gradle.release"
 
 repositories {
 	mavenCentral()
-	maven {
-		url uri("https://trevorism-build.eastus.cloudapp.azure.com/nexus/repository/maven-releases")
-	}
+    maven {
+        url uri("https://maven.pkg.github.com/trevorism/secure-http-utils")
+        credentials creds
+    }
 }
 
 dependencies {
-	implementation 'com.trevorism:secure-http-utils:0.7.0'
-	implementation 'com.google.code.gson:gson:2.8.6'
+	implementation 'com.trevorism:secure-http-utils:0.9.0'
+	implementation 'com.google.code.gson:gson:2.9.1'
 	implementation 'org.jasypt:jasypt:1.9.3'
-	implementation 'org.codehaus.groovy:groovy-all:2.5.8'
+	implementation 'org.codehaus.groovy:groovy-all:2.5.15'
 
-	testCompile 'junit:junit:4.13.2'
+	testImplementation 'junit:junit:4.13.2'
 
-}
-
-processResources{
-	doLast{
-		copy{
-			from "${System.getProperty("user.home")}/${project.name}/encryption.properties"
-			into "build/resources/main"
-		}
-	}
-}
-
-processTestResources{
-	doLast{
-		copy{
-			from "${System.getProperty("user.home")}/${project.name}/secrets.properties.expired"
-			into "build/resources/test"
-		}
-	}
 }
 
 check.dependsOn "jacocoTestReport"

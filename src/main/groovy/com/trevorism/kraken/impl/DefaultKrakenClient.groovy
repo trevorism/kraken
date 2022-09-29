@@ -55,12 +55,12 @@ class DefaultKrakenClient implements KrakenClient {
 
     @Override
     List<Order> getClosedOrders(DateRange dateRange) {
-        privateKrakenClient.getClosedOrders()
+        privateKrakenClient.getClosedOrders(dateRange)
     }
 
     @Override
     List<Order> getOpenOrders(DateRange dateRange) {
-        privateKrakenClient.getOpenOrders()
+        privateKrakenClient.getOpenOrders(dateRange)
     }
 
     @Override

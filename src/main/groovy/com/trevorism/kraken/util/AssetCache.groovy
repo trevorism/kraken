@@ -7,7 +7,7 @@ class AssetCache {
 
     static AssetCache INSTANCE = new AssetCache()
 
-    private def assets = [];
+    private def assets = []
     private PublicKrakenClient client = new DefaultPublicKrakenClient()
 
     private AssetCache() {

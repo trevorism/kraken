@@ -15,6 +15,7 @@ import com.trevorism.kraken.model.trade.Trade
 import com.trevorism.kraken.model.trade.TradeResult
 import com.trevorism.kraken.util.AssetCache
 import com.trevorism.kraken.util.KrakenSignature
+import com.trevorism.secure.ClasspathBasedPropertiesProvider
 import com.trevorism.secure.PropertiesProvider
 import org.apache.http.client.methods.CloseableHttpResponse
 import org.jasypt.util.text.StrongTextEncryptor
@@ -30,7 +31,7 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
 
     private final Gson gson = new Gson()
     private HeadersHttpClient httpClient = new HeadersBlankHttpClient()
-    private final Properties properties
+    private final PropertiesProvider propertiesProvider
 
     private final String apiKey
     private final String apiSecret
@@ -46,11 +47,10 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
 
     //Using Encryption on properties files adds a layer of security.
     DefaultPrivateKrakenClient(String propertiesFileName) {
-        properties = new Properties()
-        properties.load(DefaultPrivateKrakenClient.class.getClassLoader().getResourceAsStream(propertiesFileName) as InputStream)
+        propertiesProvider = new ClasspathBasedPropertiesProvider(propertiesFileName)
         StrongTextEncryptor encryptor = createEncryptor()
-        this.apiKey = properties.getProperty("apiKey")
-        this.apiSecret = encryptor.decrypt(properties.getProperty("apiSecret"))
+        this.apiKey = propertiesProvider.getProperty("apiKey")
+        this.apiSecret = encryptor.decrypt(propertiesProvider.getProperty("apiSecret"))
     }
 
     @Override
@@ -128,8 +128,8 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
         return builder.toString()
     }
 
-    private static StrongTextEncryptor createEncryptor() {
-        String encryptionKey = new PropertiesProvider("encryption.properties").getProperty("encryptionKey")
+    private StrongTextEncryptor createEncryptor() {
+        String encryptionKey = propertiesProvider.getProperty("encryptionKey")
         StrongTextEncryptor encryptor = new StrongTextEncryptor()
         encryptor.setPassword(encryptionKey)
         return encryptor
