@@ -16,7 +16,7 @@ class DefaultKrakenClient implements KrakenClient {
     private PrivateKrakenClient privateKrakenClient
 
     DefaultKrakenClient() {
-        privateKrakenClient = new DefaultPrivateKrakenClient()
+        this(new DefaultPrivateKrakenClient())
     }
 
     DefaultKrakenClient(PrivateKrakenClient privateKrakenClient) {

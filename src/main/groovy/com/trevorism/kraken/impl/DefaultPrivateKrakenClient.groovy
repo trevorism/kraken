@@ -30,8 +30,9 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
     private final Gson gson = new Gson()
     private HeadersHttpClient httpClient = new HeadersBlankHttpClient()
 
-    private final String apiKey
-    private final String apiSecret
+    private String propertiesFileName
+    private String apiKey
+    private String apiSecret
 
     DefaultPrivateKrakenClient() {
         this("secrets.properties")
@@ -44,10 +45,7 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
 
     //Using Encryption on properties files adds a layer of security.
     DefaultPrivateKrakenClient(String propertiesFileName) {
-        def propertiesProvider = new ClasspathBasedPropertiesProvider(propertiesFileName)
-        StrongTextEncryptor encryptor = createEncryptor(propertiesProvider)
-        this.apiKey = propertiesProvider.getProperty("apiKey")
-        this.apiSecret = encryptor.decrypt(propertiesProvider.getProperty("apiSecret"))
+        this.propertiesFileName = propertiesFileName
     }
 
     @Override
@@ -102,6 +100,8 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
     }
 
     private def makeKrakenPrivateRequest(String url, Map requestData = [:]) {
+        setApiKeyAndSecret()
+
         String path = url.substring(API_PREFIX.length())
         String nonce = String.valueOf(System.currentTimeMillis() * 1000)
         String formData = buildFormDataString(requestData, nonce)
@@ -214,5 +214,18 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
         if(trade.amount <= 0){
             throw new KrakenRequestException("Amount of currency purchased must be > 0")
         }
+    }
+
+    private void setApiKeyAndSecret() {
+        if(apiKey != null && apiSecret != null)
+            return;
+        if(propertiesFileName == null)
+            throw new RuntimeException("Unable to set apiKey or apiSecret")
+
+        def propertiesProvider = new ClasspathBasedPropertiesProvider(propertiesFileName)
+        StrongTextEncryptor encryptor = createEncryptor(propertiesProvider)
+        this.apiKey = propertiesProvider.getProperty("apiKey")
+        this.apiSecret = encryptor.decrypt(propertiesProvider.getProperty("apiSecret"))
+
     }
 }
