@@ -1,14 +1,13 @@
 package com.trevorism.kraken.impl
 
 import com.google.gson.Gson
-import com.trevorism.http.headers.HeadersHttpClient
+import com.trevorism.http.HeadersHttpResponse
+import com.trevorism.http.HttpClient
 import com.trevorism.kraken.PrivateKrakenClient
 import com.trevorism.kraken.error.KrakenRequestException
 import com.trevorism.kraken.model.DateRange
 import com.trevorism.kraken.model.trade.LimitTrade
 import com.trevorism.kraken.model.trade.MarketTrade
-import org.apache.http.client.methods.CloseableHttpResponse
-import org.apache.http.entity.StringEntity
 import org.junit.Before
 import org.junit.Test
 
@@ -103,8 +102,8 @@ class DefaultPrivateKrakenClientTest {
         privateKrakenClient.httpClient = [post: { url, formData, headersMap ->
             assert url == "https://api.kraken.com/0/private/$urlSuffix"
             assert formData
-            return ([getEntity: { new StringEntity(responseJson) }] as CloseableHttpResponse)
-        }] as HeadersHttpClient
+            return new HeadersHttpResponse(responseJson, [:])
+        }] as HttpClient
     }
 
     private void mockHttpCallForAccountBalance() {
@@ -112,8 +111,8 @@ class DefaultPrivateKrakenClientTest {
         privateKrakenClient.httpClient = [post: { url, formData, headersMap ->
             assert url == "https://api.kraken.com/0/private/Balance"
             assert formData
-            return ([getEntity: { new StringEntity(responseJson) }] as CloseableHttpResponse)
-        }] as HeadersHttpClient
+            return new HeadersHttpResponse(responseJson, [:])
+        }] as HttpClient
     }
 
     private void mockHttpCallForTrade() {
@@ -122,8 +121,8 @@ class DefaultPrivateKrakenClientTest {
         privateKrakenClient.httpClient = [post: { url, formData, headersMap ->
             assert url == "https://api.kraken.com/0/private/AddOrder"
             assert formData.startsWith("pair=XBTUSD&type=buy")
-            return ([getEntity: { new StringEntity(responseJson) }] as CloseableHttpResponse)
-        }] as HeadersHttpClient
+            return new HeadersHttpResponse(responseJson, [:])
+        }] as HttpClient
     }
 
     private void mockHttpCallForDeletion() {
@@ -132,7 +131,7 @@ class DefaultPrivateKrakenClientTest {
         privateKrakenClient.httpClient = [post: { url, formData, headersMap ->
             assert url == "https://api.kraken.com/0/private/CancelOrder"
             assert formData
-            return ([getEntity: { new StringEntity(responseJson) }] as CloseableHttpResponse)
-        }] as HeadersHttpClient
+            return new HeadersHttpResponse(responseJson, [:])
+        }] as HttpClient
     }
 }

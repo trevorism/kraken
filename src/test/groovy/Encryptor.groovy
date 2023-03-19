@@ -1,4 +1,4 @@
-import com.trevorism.secure.ClasspathBasedPropertiesProvider
+import com.trevorism.ClasspathBasedPropertiesProvider
 import org.jasypt.util.text.StrongTextEncryptor
 
 class Encryptor {

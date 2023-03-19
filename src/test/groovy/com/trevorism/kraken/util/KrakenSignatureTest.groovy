@@ -1,6 +1,5 @@
 package com.trevorism.kraken.util
 
-import org.apache.commons.codec.binary.Base64
 import org.junit.Test
 
 class KrakenSignatureTest extends GroovyTestCase {
@@ -14,17 +13,17 @@ class KrakenSignatureTest extends GroovyTestCase {
     @Test
     void testHmacSha512() {
         byte[] sha256Data = KrakenSignature.stringToBytes("message")
-        byte[] hmacKey = Base64.decodeBase64("secret")
+        byte[] hmacKey = Base64.getDecoder().decode("secret")
 
         def bytes = KrakenSignature.hmacSha512(hmacKey, sha256Data)
-        def resultAsString = Base64.encodeBase64String(bytes)
+        def resultAsString = Base64.getEncoder().encodeToString(bytes)
         assert resultAsString == "mqMMkExSHxcEeVR9eJ0djOc35fd1hLlckCHCWmwdxAKsvuTYJwu2zRvL2CrntSjeExdz0q348Hw4TC8TXIGUkQ=="
     }
 
     @Test
     void testSha256() {
         def bytes = KrakenSignature.sha256("nonce=1")
-        def resultAsString = Base64.encodeBase64String(bytes)
+        def resultAsString = Base64.getEncoder().encodeToString(bytes)
 
         assert resultAsString == "iVdcOzbRzdiPHejLqIJ0jXKKdL8Q+mrIhX0sR3Mdko4="
     }

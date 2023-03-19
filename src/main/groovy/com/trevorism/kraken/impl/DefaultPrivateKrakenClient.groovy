@@ -1,9 +1,10 @@
 package com.trevorism.kraken.impl
 
 import com.google.gson.Gson
-import com.trevorism.http.headers.HeadersBlankHttpClient
-import com.trevorism.http.headers.HeadersHttpClient
-import com.trevorism.http.util.ResponseUtils
+import com.trevorism.ClasspathBasedPropertiesProvider
+import com.trevorism.PropertiesProvider
+import com.trevorism.http.BlankHttpClient
+import com.trevorism.http.HttpClient
 import com.trevorism.kraken.PrivateKrakenClient
 import com.trevorism.kraken.error.KrakenRequestException
 import com.trevorism.kraken.model.Asset
@@ -15,8 +16,6 @@ import com.trevorism.kraken.model.trade.Trade
 import com.trevorism.kraken.model.trade.TradeResult
 import com.trevorism.kraken.util.AssetCache
 import com.trevorism.kraken.util.KrakenSignature
-import com.trevorism.secure.ClasspathBasedPropertiesProvider
-import org.apache.http.client.methods.CloseableHttpResponse
 import org.jasypt.util.text.StrongTextEncryptor
 
 import java.text.DecimalFormat
@@ -28,7 +27,7 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
     public static final String PRIVATE_URL_PREFIX = "https://api.kraken.com/0/private"
 
     private final Gson gson = new Gson()
-    private HeadersHttpClient httpClient = new HeadersBlankHttpClient()
+    private HttpClient httpClient = new BlankHttpClient()
 
     private String propertiesFileName
     private String apiKey
@@ -106,13 +105,12 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
         String nonce = String.valueOf(System.currentTimeMillis() * 1000)
         String formData = buildFormDataString(requestData, nonce)
         def signature = KrakenSignature.create(nonce, formData, apiSecret, path)
-        def headersMap = ["User-Agent": "Mozilla/5.0",
+        def headersMap = ["User-Agent"  : "Mozilla/5.0",
                           "Content-Type": "application/x-www-form-urlencoded",
-                          "API-Key": apiKey,
-                          "API-Sign": signature]
+                          "API-Key"     : apiKey,
+                          "API-Sign"    : signature]
 
-        CloseableHttpResponse response = httpClient.post(url, formData, headersMap)
-        String json = ResponseUtils.getEntity(response)
+        String json = httpClient.post(url, formData, headersMap).value
         return gson.fromJson(json, Map)
     }
 
@@ -125,7 +123,7 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
         return builder.toString()
     }
 
-    private static StrongTextEncryptor createEncryptor(def propertiesProvider) {
+    private static StrongTextEncryptor createEncryptor(PropertiesProvider propertiesProvider) {
         String encryptionKey = propertiesProvider.getProperty("encryptionKey")
         StrongTextEncryptor encryptor = new StrongTextEncryptor()
         encryptor.setPassword(encryptionKey)
@@ -159,40 +157,40 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
     }
 
     private static Order convertDataIntoOrder(String key, Map data) {
-        Date openTime = data.opentm == 0 ? null : new Date((long)(data.opentm * 1000))
-        Date closedTime = (data.closetm == 0 || data.closetm == null) ? null : new Date((long)(data.closetm * 1000))
-        Date startTime = (data.starttm == 0 || data.starttm == null) ? null : new Date((long)(data.starttm * 1000))
-        Date expireTime = (data.expiretm == 0 || data.expiretm == null) ? null : new Date((long)(data.expiretm * 1000))
+        Date openTime = data.opentm == 0 ? null : new Date((long) (data.opentm * 1000))
+        Date closedTime = (data.closetm == 0 || data.closetm == null) ? null : new Date((long) (data.closetm * 1000))
+        Date startTime = (data.starttm == 0 || data.starttm == null) ? null : new Date((long) (data.starttm * 1000))
+        Date expireTime = (data.expiretm == 0 || data.expiretm == null) ? null : new Date((long) (data.expiretm * 1000))
         Double price = Double.valueOf(data.price) == 0 ? Double.valueOf(data.descr.price) : Double.valueOf(data.price)
 
-       return new Order(orderId: key, pair: data.descr.pair, buyOrSell:data.descr.type, orderType: data.descr.ordertype,
-               status: data.status, reason: data.reason, amount: Double.valueOf(data.vol), amountExecuted: Double.valueOf(data.vol_exec),
-       cost: Double.valueOf(data.cost), fee: Double.valueOf(data.fee), price: price, stopPrice: Double.valueOf(data.stopprice), limitPrice: Double.valueOf(data.limitprice),
-       leverage: data.descr.leverage, openDate: openTime, closedDate: closedTime, startDate: startTime, expireDate: expireTime,
-       misc: data.misc, oflags: data.oflags)
+        return new Order(orderId: key, pair: data.descr.pair, buyOrSell: data.descr.type, orderType: data.descr.ordertype,
+                status: data.status, reason: data.reason, amount: Double.valueOf(data.vol), amountExecuted: Double.valueOf(data.vol_exec),
+                cost: Double.valueOf(data.cost), fee: Double.valueOf(data.fee), price: price, stopPrice: Double.valueOf(data.stopprice), limitPrice: Double.valueOf(data.limitprice),
+                leverage: data.descr.leverage, openDate: openTime, closedDate: closedTime, startDate: startTime, expireDate: expireTime,
+                misc: data.misc, oflags: data.oflags)
     }
 
     TradeResult mapResponseIntoTradeResult(Map content) {
         if (content.error) {
             throw new KrakenRequestException(content.error.toString())
         }
-        new TradeResult(orderDescription: content.result.descr.order, closeDescription: content.result.descr.close, transactionIds: content.result.txid )
+        new TradeResult(orderDescription: content.result.descr.order, closeDescription: content.result.descr.close, transactionIds: content.result.txid)
     }
 
     LinkedHashMap<String, Object> createInputMapFromTrade(Trade trade) {
         def inputMap = [pair: trade.pair, type: trade.buyOrSell, ordertype: trade.orderType, volume: trade.amount]
-        if(trade.hasProperty("price")){
+        if (trade.hasProperty("price")) {
             DecimalFormat df = new DecimalFormat("#")
             df.setMaximumFractionDigits(10)
             inputMap.put("price", df.format(trade.price))
         }
-        if(trade.startDate){
+        if (trade.startDate) {
             inputMap.put("starttm", trade.startDate.getTime() / 1000)
         }
-        if(trade.expireDate){
+        if (trade.expireDate) {
             inputMap.put("expiretm", trade.expireDate.getTime() / 1000)
         }
-        if(trade.validateOnly){
+        if (trade.validateOnly) {
             inputMap.put("validate", trade.validateOnly)
         }
         return inputMap
@@ -206,20 +204,20 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
     }
 
     private static void validateTrade(Trade trade) {
-        if(trade.hasProperty("price")){
-            if(trade.price <= 0){
+        if (trade.hasProperty("price")) {
+            if (trade.price <= 0) {
                 throw new KrakenRequestException("Price must be > 0");
             }
         }
-        if(trade.amount <= 0){
+        if (trade.amount <= 0) {
             throw new KrakenRequestException("Amount of currency purchased must be > 0")
         }
     }
 
     private void setApiKeyAndSecret() {
-        if(apiKey != null && apiSecret != null)
+        if (apiKey != null && apiSecret != null)
             return;
-        if(propertiesFileName == null)
+        if (propertiesFileName == null)
             throw new RuntimeException("Unable to set apiKey or apiSecret")
 
         def propertiesProvider = new ClasspathBasedPropertiesProvider(propertiesFileName)

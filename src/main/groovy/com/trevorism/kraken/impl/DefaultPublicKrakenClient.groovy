@@ -1,20 +1,17 @@
 package com.trevorism.kraken.impl
 
 import com.google.gson.Gson
-import com.trevorism.http.headers.HeadersBlankHttpClient
-import com.trevorism.http.headers.HeadersHttpClient
-import com.trevorism.http.util.ResponseUtils
+import com.trevorism.http.BlankHttpClient
+import com.trevorism.http.HttpClient
 import com.trevorism.kraken.PublicKrakenClient
 import com.trevorism.kraken.error.KrakenRequestException
 import com.trevorism.kraken.model.*
-import org.apache.http.client.methods.CloseableHttpResponse
-
 import java.time.Duration
 
 class DefaultPublicKrakenClient implements PublicKrakenClient {
 
     private final Gson gson = new Gson()
-    private final HeadersHttpClient httpClient = new HeadersBlankHttpClient()
+    private final HttpClient httpClient = new BlankHttpClient()
     private final def headersMap = ["User-Agent": "Mozilla/5.0"]
 
     @Override
@@ -57,8 +54,7 @@ class DefaultPublicKrakenClient implements PublicKrakenClient {
     }
 
     private def makeKrakenPublicGetRequest(String url) {
-        CloseableHttpResponse response = httpClient.get(url, headersMap)
-        String json = ResponseUtils.getEntity(response)
+        String json = httpClient.get(url, headersMap).value
         return gson.fromJson(json, Map)
     }
 

@@ -33,7 +33,6 @@ class DefaultPublicKrakenClientTest {
     void "get asset pairs"() {
         PublicKrakenClient defaultKrakenClient = new DefaultPublicKrakenClient()
         def assetPairs = defaultKrakenClient.assetPairs
-        println assetPairs
         assert assetPairs
         assert assetPairs[0].pairName
         assert assetPairs[-1].pairName

@@ -4,7 +4,6 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
-import org.apache.commons.codec.binary.Base64
 
 class KrakenSignature {
 
@@ -13,10 +12,10 @@ class KrakenSignature {
 
     static String create(String nonce, String postData, String apiSecret, String path) {
         byte[] sha256Data = sha256("${nonce}${postData}")
-        byte[] hmacKey = Base64.decodeBase64(apiSecret.toString())
+        byte[] hmacKey = Base64.getDecoder().decode(apiSecret.toString())
         byte[] hmacMessage = concatByteArrays(stringToBytes(path), sha256Data)
         byte[] sha512 = hmacSha512(hmacKey, hmacMessage)
-        return Base64.encodeBase64String(sha512)
+        return Base64.getEncoder().encodeToString(sha512)
     }
 
     static byte[] hmacSha512(byte[] key, byte[] message) {
