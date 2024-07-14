@@ -1,8 +1,8 @@
 package com.trevorism.kraken.util
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-class KrakenSignatureTest extends GroovyTestCase {
+class KrakenSignatureTest {
 
     @Test
     void testCreate() {

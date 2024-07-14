@@ -17,7 +17,8 @@ buildscript {
     }
 }
 
-plugins{
+plugins {
+    id "java-library"
 	id "groovy"
 	id "jacoco"
 }
@@ -33,13 +34,17 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.trevorism:secure-http-utils:2.0.1'
-	implementation 'com.google.code.gson:gson:2.10.1'
+	implementation 'com.trevorism:secure-http-utils:3.2.0'
+	implementation 'com.google.code.gson:gson:2.11.0'
 	implementation 'org.jasypt:jasypt:1.9.3'
-	implementation 'org.codehaus.groovy:groovy-all:2.5.21'
+    implementation 'org.apache.groovy:groovy-all:4.0.22'
 
-	testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.3'
+}
 
+test {
+    useJUnitPlatform()
 }
 
 check.dependsOn "jacocoTestReport"

@@ -3,7 +3,7 @@ package com.trevorism.kraken.impl
 import com.trevorism.kraken.PublicKrakenClient
 import com.trevorism.kraken.model.Price
 import com.trevorism.kraken.model.ValidCandleDurations
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class DefaultPublicKrakenClientTest {
 

@@ -1,6 +1,6 @@
 package com.trevorism.kraken.model.trade
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class TradeTest {
 

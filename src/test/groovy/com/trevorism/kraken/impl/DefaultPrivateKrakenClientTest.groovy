@@ -8,15 +8,17 @@ import com.trevorism.kraken.error.KrakenRequestException
 import com.trevorism.kraken.model.DateRange
 import com.trevorism.kraken.model.trade.LimitTrade
 import com.trevorism.kraken.model.trade.MarketTrade
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
+import static org.junit.jupiter.api.Assertions.assertThrows
 
 class DefaultPrivateKrakenClientTest {
 
     private Gson gson = new Gson()
     private PrivateKrakenClient privateKrakenClient
 
-    @Before
+    @BeforeEach
     void setup() {
         privateKrakenClient = new DefaultPrivateKrakenClient("key", "secret")
     }
@@ -85,10 +87,10 @@ class DefaultPrivateKrakenClientTest {
         assert result.count
     }
 
-    @Test(expected = KrakenRequestException)
+    @Test
     void validateOrder() {
         def marketTrade = new MarketTrade(pair: "XBTUSD", buyOrSell: "buy", amount: 0)
-        privateKrakenClient.validateTrade(marketTrade)
+        assertThrows(KrakenRequestException, () -> privateKrakenClient.validateTrade(marketTrade))
     }
 
     private void mockHttpCallForOrders(String closedOrOpen) {

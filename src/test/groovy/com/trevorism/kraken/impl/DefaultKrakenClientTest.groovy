@@ -7,7 +7,7 @@ import com.trevorism.kraken.model.trade.CancelOrderResult
 import com.trevorism.kraken.model.trade.MarketTrade
 import com.trevorism.kraken.model.trade.Trade
 import com.trevorism.kraken.model.trade.TradeResult
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.time.Duration
 

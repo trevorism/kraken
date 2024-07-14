@@ -1,3 +1,7 @@
+## 0.9.1
+
+Update dependencies
+
 ## 0.9.0
 
 Update dependencies
