@@ -135,13 +135,11 @@ class DefaultPrivateKrakenClient implements PrivateKrakenClient {
             throw new KrakenRequestException(content.error.toString())
         }
 
-        def allAssets = AssetCache.INSTANCE.get()
         def values = content.result
         return values.findAll { k, v ->
             Double.valueOf(v) > EPSILON
         }.collect { k, v ->
-            Asset asset = allAssets.find { it.krakenName == k }
-            new AssetBalance(assetName: asset.assetName, balance: Double.valueOf(v))
+            new AssetBalance(assetName: k, balance: Double.valueOf(v))
         } as Set
     }
 
