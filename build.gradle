@@ -34,13 +34,13 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.trevorism:secure-http-utils:3.2.0'
-	implementation 'com.google.code.gson:gson:2.11.0'
+	implementation 'com.trevorism:secure-http-utils:3.2.1'
+	implementation 'com.google.code.gson:gson:2.14.0'
 	implementation 'org.jasypt:jasypt:1.9.3'
-    implementation 'org.apache.groovy:groovy-all:4.0.22'
+    implementation 'org.apache.groovy:groovy-all:5.0.6'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:6.1.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:6.1.0'
 }
 
 test {

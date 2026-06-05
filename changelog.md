@@ -1,3 +1,7 @@
+## 1.2.0
+
+Migrate to java 25, latest gradle. Update dependencies.
+
 ## 1.1.0
 
 With the introduction of staking assets, we no longer map the values to those that are publicly traded.
